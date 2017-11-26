@@ -1,0 +1,18 @@
+<grupo>
+  <nombre>satori</nombre>
+  <url>https://svn.riouxsvn.com/270172satori</url>
+
+  <miembro>
+    <nombre>Ricardo Rafael Azopardo Cadenas</nombre>
+    <codigo>201627516010</codigo>
+    <email>rrazopardc@eafit.edu.co</email>
+  </miembro>
+
+  <miembro>
+    <nombre>Alex Montoya Franco</nombre>
+    <codigo>201610192010</codigo>
+    <email>amonto69@eafit.edu.co</email>
+  </miembro>
+  
+  <mainclass clase="App"/>
+</grupo>

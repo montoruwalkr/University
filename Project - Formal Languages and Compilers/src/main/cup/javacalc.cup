@@ -1,0 +1,74 @@
+import co.edu.eafit.dis.st0270.javacalc.abstree.AbsTree;
+import co.edu.eafit.dis.st0270.javacalc.abstree.StmsNode;
+import co.edu.eafit.dis.st0270.javacalc.abstree.ShiftLeftNode;
+import co.edu.eafit.dis.st0270.javacalc.abstree.FunctionNode;
+import co.edu.eafit.dis.st0270.javacalc.abstree.AddNode;
+import co.edu.eafit.dis.st0270.javacalc.abstree.NumberNode;
+import co.edu.eafit.dis.st0270.javacalc.abstree.SubNode;
+import co.edu.eafit.dis.st0270.javacalc.abstree.MinusNode;
+import co.edu.eafit.dis.st0270.javacalc.abstree.PlusNode;
+import co.edu.eafit.dis.st0270.javacalc.abstree.EpsilonNode;
+import co.edu.eafit.dis.st0270.javacalc.abstree.TimesNode;
+import co.edu.eafit.dis.st0270.javacalc.abstree.ProgNode;
+import co.edu.eafit.dis.st0270.javacalc.abstree.IdentifierNode;
+import co.edu.eafit.dis.st0270.javacalc.abstree.ShiftRightNode;
+import co.edu.eafit.dis.st0270.javacalc.abstree.DivideNode;
+import co.edu.eafit.dis.st0270.javacalc.abstree.RecallNode;
+import co.edu.eafit.dis.st0270.javacalc.abstree.ClearNode;
+import co.edu.eafit.dis.st0270.javacalc.abstree.StoreNode;
+import co.edu.eafit.dis.st0270.javacalc.abstree.AssignNode;
+import co.edu.eafit.dis.st0270.s2017.satori.App;
+
+import java_cup.runtime.*;
+
+terminal R, C, S, P, M, EQUALS, LPAREN, RPAREN,SHIFTL, SHIFTR, PLUS, MINUS, TIMES, DIVIDE, EOL;
+
+terminal Integer NUMBER;
+terminal String IDENTIFIER, MAX, MIN, SWAP;
+
+non terminal AbsTree prog, stms, line, bitwiseExpr, expr, term, storable, factor;
+
+start with prog;
+
+prog ::= stms:st				    {: RESULT = new ProgNode(st);		:}
+     ;
+
+stms ::= stms:st line:li			    {: RESULT = new StmsNode(st, li);		:}
+     |	 line:li  			 	    {: RESULT = li; 		 		:}
+     ;
+
+line ::= bitwiseExpr:btw EOL			    {: RESULT = btw;				:}
+     |	 IDENTIFIER:id EQUALS bitwiseExpr:btw EOL   {: RESULT = new AssignNode(btw, id);	:}
+     |	 EOL					    {: RESULT = new EpsilonNode();		:}
+     ;
+
+bitwiseExpr ::= bitwiseExpr:btw SHIFTL expr:ex	    {: RESULT = new ShiftLeftNode(btw,ex);	:}
+     |	    	bitwiseExpr:btw SHIFTR expr:ex	    {: RESULT = new ShiftRightNode(btw,ex);	:}
+     |	 	expr:ex	    	   		    {: RESULT = ex;				:}
+     ;
+
+expr ::= expr:ex PLUS term:te			    {: RESULT = new AddNode(ex, te);		:}
+     |	 expr:ex MINUS term:te			    {: RESULT = new SubNode(ex, te);		:}
+     |	 term:te	       			    {: RESULT = te;  				:} 
+     ;
+
+term ::= term:te TIMES storable:sto		    {: RESULT = new TimesNode(te,sto);		:}
+     |	 term:te DIVIDE storable:sto		    {: RESULT = new DivideNode(te,sto);		:}
+     |	 storable:sto    			    {: RESULT = sto; 				:}
+     ;
+
+storable ::= factor:s S			            {: RESULT = new StoreNode(s);		:}
+	 |   factor:p P				    {: RESULT = new PlusNode(p);		:}
+	 |   factor:m M			            {: RESULT = new MinusNode(m);		:}
+	 |   factor:f 				    {: RESULT = f;				:}
+	 ;
+
+factor ::= NUMBER:num				    {: RESULT = new NumberNode(num);		:}	
+       |   IDENTIFIER:id			    {: RESULT = new IdentifierNode(id);		:}
+       |   MAX:max LPAREN bitwiseExpr:btw RPAREN    {: RESULT = new FunctionNode(btw, max);	:}
+       |   MIN:min LPAREN bitwiseExpr:btw RPAREN    {: RESULT = new FunctionNode(btw, min);	:}
+       |   SWAP:swap LPAREN bitwiseExpr:btw RPAREN  {: RESULT = new FunctionNode(btw, swap);	:}
+       |   R	       		   		    {: RESULT = new RecallNode();		:}
+       |   C					    {: RESULT = new ClearNode();		:}
+       |   LPAREN bitwiseExpr:btw RPAREN	    {: RESULT = btw;				:}		
+       ;
