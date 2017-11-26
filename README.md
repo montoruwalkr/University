@@ -1,6 +1,4 @@
-# University
-University Projects
-
+# University Projects
 Final Projects of University Subjects:
 
 1. Subject: Data Structures and Algorithms 1
